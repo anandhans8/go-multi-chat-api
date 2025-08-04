@@ -1,0 +1,53 @@
+# MySQL InitialConfiguration
+MYSQL_DB=go-multi-chat-api
+MYSQL_USER=mysql
+MYSQL_PASSWORD=mysql
+
+# Database Configuration for Application
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=mysql
+DB_PASSWORD=mysql
+DB_NAME=go-multi-chat-api
+DB_SSLMODE=disable
+
+# Server Configuration
+SERVER_PORT=8080
+
+# Database Connection Pool Configuration
+DB_MAX_IDLE_CONNS=10
+DB_MAX_OPEN_CONNS=50
+DB_CONN_MAX_LIFETIME=300
+
+# JWT Configuration
+JWT_ACCESS_SECRET_KEY=devAccessSecretKey123456789
+JWT_ACCESS_TIME_MINUTE=15
+JWT_REFRESH_SECRET_KEY=devRefreshSecretKey123456789
+JWT_REFRESH_TIME_HOUR=168
+JWT_ISSUER=go-multi-chat-api
+
+# Initial User Configuration
+START_USER_EMAIL=anandhans8@gmail.com
+START_USER_PW=qwerty123
+
+# LDAP Configuration
+LDAP_ENABLED=false                   # Set to true to enable LDAP authentication
+LDAP_URL=ldap.example.com:389        # LDAP server URL with port
+LDAP_BIND_DN=cn=admin,dc=example,dc=com  # Service account DN for initial bind
+LDAP_BIND_PASSWORD=admin_password    # Service account password
+LDAP_BASE_DN=dc=example,dc=com       # Base DN for user search
+LDAP_USER_FILTER=(uid=%s)            # Filter to search for users, %s will be replaced with username
+LDAP_TLS_ENABLED=false               # Set to true to use TLS for LDAP connection
+LDAP_ATTRIBUTES=uid,mail,givenName,sn # Comma-separated list of attributes to retrieve
+
+# Azure AD Configuration
+AZURE_AD_ENABLED=false               # Set to true to enable Azure AD authentication
+AZURE_AD_TENANT_ID=your-tenant-id    # Azure AD Tenant ID
+AZURE_AD_CLIENT_ID=your-client-id    # Azure AD Client ID
+AZURE_AD_CLIENT_SECRET=your-client-secret # Azure AD Client Secret
+AZURE_AD_REDIRECT_URI=http://localhost:8080/auth/callback # Redirect URI after
+AZURE_AD_SCOPE=openid,profile,email   # Scopes to request from Azure AD
+
+# Signal CLI Configuration
+SIGNAL_CLI_CONFIG_DIR="/path/to/signal-cli/config"
+SIGNAL_FROM_NUMBER="+1234567890"

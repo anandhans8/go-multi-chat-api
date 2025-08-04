@@ -1,0 +1,12 @@
+alerting:
+  email:
+    from: ""
+    username: ""
+    password: ""
+    host: ""
+    port: 587
+    to: ""
+    overrides: []
+    subject: "Alert Notification"
+  signal:
+    from: "+919876543210"

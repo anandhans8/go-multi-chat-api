@@ -1,0 +1,21 @@
+# IDE Folders and Files
+.idea
+.DS_Store
+.env
+
+
+*.txt
+*.log
+
+go-multi-chat-api
+config.json
+
+app-microservice
+main
+dev-aceso
+
+
+coverage.html
+coverage.out
+coverage_filtered.out
+
