@@ -1,6 +1,7 @@
 package user
 
 import (
+	"gorm.io/driver/mysql"
 	"regexp"
 	"testing"
 	"time"
@@ -11,15 +12,15 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func setupMockDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock, func()) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		Conn:                      db,
+		SkipInitializeWithVersion: true,
 	}), &gorm.Config{})
 	require.NoError(t, err)
 	cleanup := func() { db.Close() }
