@@ -60,6 +60,11 @@ func AuthJWTMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		userID, ok := claims["id"].(float64)
+		if ok {
+			c.Set("userID", userID)
+		}
+
 		c.Next()
 	}
 }
