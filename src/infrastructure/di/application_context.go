@@ -201,7 +201,7 @@ func SetupDependencies(loggerInstance *logger.Logger) (*ApplicationContext, erro
 	authUC := authUseCase.NewAuthUseCase(userRepo, jwtService, ldapService, azureADService, loggerInstance)
 	userUC := userUseCase.NewUserUseCase(userRepo, loggerInstance)
 
-	// Create message processor with 10 worker goroutines
+	// Create message processor with 100 worker goroutines
 	messageProcessor := messaging.NewMessageProcessor(
 		signalClientInstance,
 		providerRepository,
@@ -209,7 +209,7 @@ func SetupDependencies(loggerInstance *logger.Logger) (*ApplicationContext, erro
 		messageTransactionRepository,
 		messageTransactionHistoryRepository,
 		loggerInstance,
-		10, // 10 worker goroutines
+		100, // 100 worker goroutines
 	)
 
 	// Initialize message use case

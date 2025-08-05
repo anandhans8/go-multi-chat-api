@@ -117,7 +117,7 @@ func (r *MySQLRepository) InitDatabase() error {
 		return fmt.Errorf("failed to load database configuration: %w", err)
 	}
 
-	// Create GORM logger with zap
+	// Create a GORM logger with zap
 	gormZap := logger.NewGormLogger(r.Logger.Log).
 		LogMode(gormlogger.Warn) // Silent / Error / Warn / Info
 
@@ -180,7 +180,7 @@ func (r *MySQLRepository) SeedInitialUser() error {
 		return nil
 	}
 
-	// Check if user already exists
+	// Check if a user already exists
 	var existingUser user.User
 	err := r.DB.Where("email = ?", email).First(&existingUser).Error
 	if err == nil {
@@ -188,7 +188,7 @@ func (r *MySQLRepository) SeedInitialUser() error {
 		return nil
 	}
 
-	// Create initial user
+	// Create an initial user
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.DefaultCost)
 	if err != nil {
 		r.Logger.Error("Error hashing password for initial user", zap.Error(err))
@@ -196,11 +196,12 @@ func (r *MySQLRepository) SeedInitialUser() error {
 	}
 
 	newUser := user.User{
-		Email:        email,
-		HashPassword: string(hashedPassword),
-		Role:         "admin",
-		UserName:     "admin",
-		Status:       true,
+		Email:            email,
+		HashPassword:     string(hashedPassword),
+		Role:             "admin",
+		UserName:         "admin",
+		Status:           true,
+		MessageRateLimit: 1000, // Example rate limit
 	}
 
 	err = r.DB.Create(&newUser).Error
@@ -210,6 +211,49 @@ func (r *MySQLRepository) SeedInitialUser() error {
 	}
 
 	r.Logger.Info("Initial user created successfully", zap.String("email", email))
+
+	// Create default providers for the initial user
+	defaultProviders := []provider.Provider{
+		{Name: "Signal", Type: "signal", Status: true, Description: "Signal is a free and open-source messaging app for Android and iOS."},
+		{Name: "Teams", Type: "teams", Status: true, Description: "Microsoft Teams is a collaboration app that helps your team stay organized and has conversations all in one place."},
+		{Name: "Sms", Type: "sms", Status: true, Description: "SMS is a text messaging service component of most telephone, internet, and mobile device systems."},
+		{Name: "Email", Type: "email", Status: true, Description: "Email is a method of exchanging digital messages between people using electronic devices."},
+	}
+
+	for _, providerData := range defaultProviders {
+		var (
+			// Check if the provider already exists
+			existingProvider provider.Provider
+		)
+		err = r.DB.Where("name = ?", providerData.Name).First(&existingProvider).Error
+		err = r.DB.Create(&providerData).Error
+		if err != nil {
+			r.Logger.Error("Error creating default provider", zap.Error(err), zap.String("provider", providerData.Name))
+			return err
+		}
+		r.Logger.Info("Default provider created successfully", zap.String("provider", providerData.Name))
+	}
+
+	var signalProvider provider.Provider
+	// Check if Signal provider exists
+	err = r.DB.Where("name = ?", "Signal").First(&signalProvider).Error
+	if err != nil {
+		r.Logger.Error("Signal provider not found", zap.Error(err))
+		return err
+	}
+
+	// Create user-provider associations
+	userProvider := provider.UserProvider{
+		UserID:     newUser.ID,
+		ProviderID: signalProvider.ID,
+		Status:     true,
+		Priority:   1, // Default priority
+	}
+	err = r.DB.Create(&userProvider).Error
+	if err != nil {
+		r.Logger.Error("Error creating user-provider association", zap.Error(err), zap.String("provider", signalProvider.Name))
+		return err
+	}
 	return nil
 }
 

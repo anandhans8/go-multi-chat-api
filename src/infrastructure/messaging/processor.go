@@ -51,7 +51,7 @@ func NewMessageProcessor(
 	workerCount int,
 ) *MessageProcessor {
 	if workerCount <= 0 {
-		workerCount = 5 // Default to 5 workers if not specified
+		workerCount = 10 // Default to 10 workers if not specified
 	}
 
 	processor := &MessageProcessor{
@@ -62,7 +62,7 @@ func NewMessageProcessor(
 		messageTransactionHistoryRepository: messageTransactionHistoryRepository,
 		Logger:                              loggerInstance,
 		workerCount:                         workerCount,
-		messageQueue:                        make(chan *provider.MessageTransaction, 100), // Buffer size of 100
+		messageQueue:                        make(chan *provider.MessageTransaction, 1000), // Buffer size of 1000
 		shutdown:                            make(chan struct{}),
 	}
 
@@ -184,6 +184,7 @@ func (p *MessageProcessor) checkUndeliveredMessages() {
 
 		if nextProvider == nil {
 			p.Logger.Warn("No alternative provider found for fallback", zap.Int("userID", msg.UserID), zap.Int("messageID", msg.ID))
+			p.updateMessageStatus(msg.ID, "delivered", "", "")
 			continue
 		}
 
@@ -378,9 +379,12 @@ func (p *MessageProcessor) processMessage(msg *provider.MessageTransaction) {
 // updateMessageStatus updates the status of a message
 func (p *MessageProcessor) updateMessageStatus(id int, status string, errorMessage string, responseData string) {
 	updateData := map[string]interface{}{
-		"status":       status,
-		"errorMessage": errorMessage,
-		"processing":   false, // Mark as not being processed anymore
+		"status":     status,
+		"processing": false, // Mark as not being processed anymore
+	}
+
+	if errorMessage != "" {
+		updateData["errorMessage"] = errorMessage
 	}
 
 	if responseData != "" {

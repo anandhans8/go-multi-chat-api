@@ -21,8 +21,8 @@ type User struct {
 	LastName         string    `gorm:"column:last_name"`
 	Status           bool      `gorm:"column:status"`
 	HashPassword     string    `gorm:"column:hash_password"`
-	MessageRateLimit int       `gorm:"column:message_rate_limit;default:100"` // Default to 100 messages per day
-	Role             string    `gorm:"column:role;default:'member'"`          // Default role is member
+	MessageRateLimit int       `gorm:"column:message_rate_limit;default:1000"` // Default to 1000 messages per day
+	Role             string    `gorm:"column:role;default:'member'"`           // Default role is member
 	CreatedAt        time.Time `gorm:"autoCreateTime:mili"`
 	UpdatedAt        time.Time `gorm:"autoUpdateTime:mili"`
 }
