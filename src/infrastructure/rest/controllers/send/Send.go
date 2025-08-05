@@ -61,18 +61,31 @@ func (c *SendController) Message(ctx *gin.Context) {
 		return
 	}
 
+	userIdentity, exists := ctx.Get("userID")
+	if !exists {
+		ctx.JSON(http.StatusOK, gin.H{"error": "User not found"})
+		return
+	}
+
+	userID, ok := userIdentity.(float64)
+	if !ok {
+		c.Logger.Error("Invalid user ID type", zap.Any("userID", userIdentity))
+		ctx.JSON(http.StatusOK, gin.H{"error": "User not found"})
+		return
+	}
+
 	// Convert controller request to use case request
 	useCaseRequest := &message.MessageRequest{
 		Type:       request.Type,
 		Message:    request.Message,
 		Recipients: request.Recipients,
-		UserID:     request.UserID,
+		UserID:     int(userID),
 	}
 
 	// Call the use case
 	useCaseResponse, err := c.messageUseCase.SendMessage(useCaseRequest)
 	if err != nil {
-		c.Logger.Error("Error sending message", zap.Error(err), zap.Int("userID", request.UserID))
+		c.Logger.Error("Error sending message", zap.Error(err), zap.Float64("userID", userID))
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error sending message"})
 		return
 	}
@@ -85,7 +98,7 @@ func (c *SendController) Message(ctx *gin.Context) {
 	}
 
 	c.Logger.Info("Message queued for processing",
-		zap.Int("userID", request.UserID),
+		zap.Float64("userID", userID),
 		zap.Int("transactionID", useCaseResponse.ID))
 
 	// Return accepted response

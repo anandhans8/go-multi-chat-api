@@ -178,15 +178,14 @@ func (m *MessageUseCase) SendMessage(request *MessageRequest) (*MessageResponse,
 	// Create message transaction record
 	recipientsJSON, _ := json.Marshal(request.Recipients)
 	messageTransaction := &provider.MessageTransaction{
-		UserID:      request.UserID,
-		ProviderID:  selectedProvider.ProviderID,
-		Recipients:  string(recipientsJSON),
-		Message:     request.Message,
-		Status:      "pending",
-		RetryCount:  0,
-		NextRetryAt: time.Time{}, // Zero time
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		UserID:     request.UserID,
+		ProviderID: selectedProvider.ProviderID,
+		Recipients: string(recipientsJSON),
+		Message:    request.Message,
+		Status:     "pending",
+		RetryCount: 0,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
 	}
 
 	// Save initial transaction record

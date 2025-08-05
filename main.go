@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -29,6 +31,12 @@ func loadServerConfig() ServerConfig {
 }
 
 func main() {
+
+	envError := godotenv.Load(".env")
+	if envError != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	env := getEnvOrDefault("GO_ENV", "development")
 	var loggerInstance *logger.Logger
 	var err error

@@ -39,30 +39,30 @@ type MessageTransaction struct {
 	ResponseData string // JSON response data
 	Status       string // success, failed, pending
 	ErrorMessage string
-	RetryCount   int       // Number of retry attempts
-	NextRetryAt  time.Time // When to retry next
-	Processing   bool      // Whether the message is currently being processed
-	ProcessedAt  time.Time // When the message was last processed
+	RetryCount   int        // Number of retry attempts
+	NextRetryAt  *time.Time // When to retry next
+	Processing   bool       // Whether the message is currently being processed
+	ProcessedAt  *time.Time // When the message was last processed
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
 
 // MessageTransactionHistory represents the history of a message transaction
 type MessageTransactionHistory struct {
-	ID              int
-	MessageID       int       // Reference to the original message transaction
-	UserID          int
-	ProviderID      int
-	Recipients      string    // JSON array of recipients
-	Message         string
-	RequestData     string    // JSON request data
-	ResponseData    string    // JSON response data
-	Status          string    // success, failed
-	ErrorMessage    string
-	RetryCount      int       // Number of retry attempts
-	ProcessedAt     time.Time // When the message was processed
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID           int
+	MessageID    int // Reference to the original message transaction
+	UserID       int
+	ProviderID   int
+	Recipients   string // JSON array of recipients
+	Message      string
+	RequestData  string // JSON request data
+	ResponseData string // JSON response data
+	Status       string // success, failed
+	ErrorMessage string
+	RetryCount   int       // Number of retry attempts
+	ProcessedAt  time.Time // When the message was processed
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 // IProviderService defines the interface for provider service operations

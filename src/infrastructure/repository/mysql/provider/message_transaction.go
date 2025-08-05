@@ -13,21 +13,21 @@ import (
 
 // MessageTransaction is the database model for message transactions
 type MessageTransaction struct {
-	ID           int       `gorm:"primaryKey"`
-	UserID       int       `gorm:"column:user_id;index"`
-	ProviderID   int       `gorm:"column:provider_id;index"`
-	Recipients   string    `gorm:"column:recipients;type:text"`
-	Message      string    `gorm:"column:message;type:text"`
-	RequestData  string    `gorm:"column:request_data;type:text"`
-	ResponseData string    `gorm:"column:response_data;type:text"`
-	Status       string    `gorm:"column:status;index"`
-	ErrorMessage string    `gorm:"column:error_message;type:text"`
-	RetryCount   int       `gorm:"column:retry_count;default:0"`
-	NextRetryAt  time.Time `gorm:"column:next_retry_at;index"`
-	Processing   bool      `gorm:"column:processing;default:false;index"`
-	ProcessedAt  time.Time `gorm:"column:processed_at"`
-	CreatedAt    time.Time `gorm:"autoCreateTime:mili"`
-	UpdatedAt    time.Time `gorm:"autoUpdateTime:mili"`
+	ID           int        `gorm:"primaryKey"`
+	UserID       int        `gorm:"column:user_id;index"`
+	ProviderID   int        `gorm:"column:provider_id;index"`
+	Recipients   string     `gorm:"column:recipients;type:text"`
+	Message      string     `gorm:"column:message;type:text"`
+	RequestData  string     `gorm:"column:request_data;type:text"`
+	ResponseData string     `gorm:"column:response_data;type:text"`
+	Status       string     `gorm:"column:status;index"`
+	ErrorMessage string     `gorm:"column:error_message;type:text"`
+	RetryCount   int        `gorm:"column:retry_count;default:0"`
+	NextRetryAt  *time.Time `gorm:"column:next_retry_at;index"`
+	Processing   bool       `gorm:"column:processing;default:false;index"`
+	ProcessedAt  *time.Time `gorm:"column:processed_at"`
+	CreatedAt    time.Time  `gorm:"autoCreateTime:mili"`
+	UpdatedAt    time.Time  `gorm:"autoUpdateTime:mili"`
 }
 
 func (MessageTransaction) TableName() string {
@@ -227,11 +227,11 @@ func (mt *MessageTransaction) toDomainMapper() *domainProvider.MessageTransactio
 		Status:       mt.Status,
 		ErrorMessage: mt.ErrorMessage,
 		RetryCount:   mt.RetryCount,
-		NextRetryAt:  mt.NextRetryAt,
-		Processing:   mt.Processing,
-		ProcessedAt:  mt.ProcessedAt,
-		CreatedAt:    mt.CreatedAt,
-		UpdatedAt:    mt.UpdatedAt,
+		//NextRetryAt:  mt.NextRetryAt,
+		Processing: mt.Processing,
+		//ProcessedAt:  mt.ProcessedAt,
+		CreatedAt: mt.CreatedAt,
+		UpdatedAt: mt.UpdatedAt,
 	}
 }
 
@@ -247,11 +247,11 @@ func messageTransactionFromDomainMapper(mt *domainProvider.MessageTransaction) *
 		Status:       mt.Status,
 		ErrorMessage: mt.ErrorMessage,
 		RetryCount:   mt.RetryCount,
-		NextRetryAt:  mt.NextRetryAt,
-		Processing:   mt.Processing,
-		ProcessedAt:  mt.ProcessedAt,
-		CreatedAt:    mt.CreatedAt,
-		UpdatedAt:    mt.UpdatedAt,
+		//NextRetryAt:  mt.NextRetryAt,
+		Processing: mt.Processing,
+		//ProcessedAt:  mt.ProcessedAt,
+		CreatedAt: mt.CreatedAt,
+		UpdatedAt: mt.UpdatedAt,
 	}
 }
 
@@ -301,7 +301,7 @@ func (r *MessageTransactionRepository) MoveToHistory(id int, historyRepository M
 		Status:       messageTransaction.Status,
 		ErrorMessage: messageTransaction.ErrorMessage,
 		RetryCount:   messageTransaction.RetryCount,
-		ProcessedAt:  messageTransaction.ProcessedAt,
+		ProcessedAt:  messageTransaction.UpdatedAt,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
